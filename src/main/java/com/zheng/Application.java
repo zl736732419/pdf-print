@@ -7,11 +7,21 @@ import com.zheng.util.PDFPrintUtil;
  */
 public class Application {
     public static void main(String[] args) throws Exception {
-        String outFile = "D://images/out.pdf";
-        String template = "D://images/template.pdf";
+//        new Application().createPdf();
+        new Application().mergePdfs();
 
-        PDFPrintUtil.editPdfTemplate(template, outFile);
+    }
 
+    private void createPdf() throws Exception {
+        String outFile = "D://images/59_out.pdf";
+        String template = "D://images/59_template.pdf";
+        PDFPrintUtil.createPdfByTemplate(template, outFile);
+    }
+
+    private void mergePdfs() {
+        String dirPath = "C:/Users/dell/Desktop/pdfs";
+        String outPath = "C:/Users/dell/Desktop/merge.pdf";
+        PDFPrintUtil.mergePdfs(dirPath, outPath);
     }
 
 }
