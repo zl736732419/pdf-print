@@ -107,21 +107,23 @@ public class PDFPrintUtil {
             Throwables.propagate(new RuntimeException("合并pdf文件失败，给定路径" + dirPath +"不是目录!"));
         }
 
-
         List<File> pdfs = getPdfFiles(dir);
 
         PDFMergerUtility mergePdf = new PDFMergerUtility();
         mergePdf.setDestinationFileName(outPath);
+        long start = System.currentTimeMillis();
         try {
             for(File pdf : pdfs) {
-                    mergePdf.addSource(pdf);
+                mergePdf.addSource(pdf);
             }
             mergePdf.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
         } catch (Exception e) {
             Throwables.propagate(new RuntimeException("合并pdf异常：" + e.getMessage()));
         }
-        
-        logger.info("合并pdf---------------成功!");
+
+        long end = System.currentTimeMillis();
+
+        logger.info("合并pdf---------------成功!共耗时:" + (end - start));
     }
 
     /**
