@@ -1,23 +1,30 @@
 package com.zheng.util;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.*;
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.AcroFields.Item;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 /**
  * Created by zhenglian on 2016/9/30.
@@ -54,12 +61,17 @@ public class PDFPrintUtil {
         PdfStamper ps = new PdfStamper(reader, new FileOutputStream(outFile)); // 生成的输出流
         AcroFields s = ps.getAcroFields();
         BaseFont bf = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
+        Item item = null;
         for(Map.Entry<String, Object> entry : params.entrySet()) {
             //设置文本域表单的字体
             // 对于模板要显中文的，在此处设置字体比在pdf模板中设置表单字体的好处：
             //1.模板文件的大小不变；2.字体格式满足中文要求
+        	item = s.getFieldItem(entry.getKey());
+        	if(item == null) { //检查当前模板中是否存在指定的字段
+        		continue;
+        	}
+        	
             s.setFieldProperty(entry.getKey(), "textfont", bf, null);
-
             //编辑文本域表单的内容
             s.setField(entry.getKey(), entry.getValue().toString());
         }
